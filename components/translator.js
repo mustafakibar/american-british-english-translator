@@ -2,6 +2,12 @@ const americanOnly = require('./american-only.js');
 const americanToBritishSpelling = require('./american-to-british-spelling.js');
 const americanToBritishTitles = require('./american-to-british-titles.js');
 const britishOnly = require('./british-only.js');
+const britishToAmericanSpelling = Object.fromEntries(
+  Object.entries(americanToBritishSpelling).map((k) => k.reverse())
+);
+const britishToAmericanTitles = Object.fromEntries(
+  Object.entries(americanToBritishTitles).map((k) => k.reverse())
+);
 require('dotenv').config();
 
 const IS_TRACE_ENABLED = process.env.NODE_ENV === 'trace';
@@ -42,11 +48,10 @@ class Translator {
   americanToBritish = (text, highlight) => {
     let american, british;
 
-    for ([american, british] of Object.entries(americanOnly)) {
-      text = text.replaceBase(`(?<!-)\\b${american}\\b`, british, highlight);
-    }
-
-    for ([american, british] of Object.entries(americanToBritishSpelling)) {
+    for ([american, british] of Object.entries({
+      ...americanOnly,
+      ...americanToBritishSpelling,
+    })) {
       text = text.replaceBase(`(?<!-)\\b${american}\\b`, british, highlight);
     }
 
@@ -62,15 +67,14 @@ class Translator {
   britishToAmerican = (text, highlight) => {
     let british, american;
 
-    for ([british, american] of Object.entries(britishOnly)) {
+    for ([british, american] of Object.entries({
+      ...britishOnly,
+      ...britishToAmericanSpelling,
+    })) {
       text = text.replaceBase(`(?<!-)\\b${british}\\b`, american, highlight);
     }
 
-    for ([american, british] of Object.entries(americanToBritishSpelling)) {
-      text = text.replaceBase(`(?<!-)\\b${british}\\b`, american, highlight);
-    }
-
-    for ([american, british] of Object.entries(americanToBritishTitles)) {
+    for ([british, american] of Object.entries(britishToAmericanTitles)) {
       text = text.replaceBase(
         `\\b${british}\\b`,
         american.capitalize(),
