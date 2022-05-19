@@ -185,6 +185,17 @@ suite('Unit Tests', () => {
       done();
     });
 
+    test('Translate > The car boot sale at Boxted Airfield was called off.', (done) => {
+      const actual = translator.translate(
+        'The car boot sale at Boxted Airfield was called off.',
+        Translator.LOCALE_BRITISH_TO_AMERICAN
+      );
+      const expected = 'The swap meet at Boxted Airfield was called off.';
+
+      assert.equal(actual, expected);
+      done();
+    });
+
     test('Translate > Have you met Mrs Kalyani?', (done) => {
       const actual = translator.translate(
         'Have you met Mrs Kalyani?',
